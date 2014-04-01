@@ -8,10 +8,15 @@
 
 #include "RootVariable.hh"
 #include "RootVariableFormula.hh"
+#include "RootVariableFunction.hh"
 #include "RootVariableList.hh"
 #include "RootVariableManager.hh"
 
 using namespace qosc;
+
+double test_function( RootVariableList& vars ) {
+  return vars.GetVariableValue( "y[1][2]" )*vars.GetVariableValue("x");
+}
 
 int main( int iarg, char** argv ) {
 
@@ -61,6 +66,7 @@ int main( int iarg, char** argv ) {
   tc_rootvar->Add( "output_test_rootfile.root" );
   RootVariableList* rootvars = new RootVariableList( "x:s:y[1][1]:x*y[0][2]/y[1][0]", tc_rootvar );
   RootVariable* rootvar_y =  new RootVariableFormula( "y", tc_rootvar );
+  rootvars->Add( "myfunc", &test_function, "x:y[1][2]", tc_rootvar );
 
   RootVariableManager::GetTheRootVarManager()->DumpTheVariableCache();
 
@@ -114,6 +120,12 @@ int main( int iarg, char** argv ) {
     // Formula test: Formula here is good to 1e-14
     if ( std::fabs(rootvars->GetVariableValue( "x*y[0][2]/y[1][0]")-x*y[0][2]/y[1][0])>1e-14 ) {
       std::cout << "Entry " << i << ": value of formula disagrees. standard=" << x*y[0][2]/y[1][0] << " rootvar=" << rootvars->GetVariableValue( "x*y[0][2]/y[1][0]" ) <<  std::endl;
+    }
+
+    // ================
+    // Function test
+    if ( fabs(rootvars->GetVariableValue( "myfunc" )-x*y[1][2])>1e-14 ) {
+      std::cout << "Entry " << i << ": value of formula disagrees. standard=" << x*y[1][2] << " rootvar=" << rootvars->GetVariableValue( "myfunc" ) <<  std::endl;
     }
 
     if ( i%10==0 ) {
