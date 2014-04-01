@@ -1,0 +1,165 @@
+# -*- mode: Makefile -*- 
+
+ifeq (${BASEDIR},)
+	BASEDIR=${PWD}
+endif
+
+UNAME = $(shell uname)
+LIBDIR = $(BASEDIR)/lib
+df = $(DEPDIR)/$(*F)
+
+HEADERS = $(notdir $(SRCS:.cc=.h)) LinkDef.h
+COBJS = $(addprefix $(OBJDIR)/,$(notdir $(CCSRCS:.cc=.o)))
+FOBJS = $(addprefix $(OBJDIR)/,$(notdir $(FSRCS:.F=.o)))
+EXES = $(addprefix $(EXEDIR)/,$(notdir $(EXESRCS:.cc=)))
+PYOBJS = $(addprefix $(PYLIBDIR)/,$(notdir $(PYSRCS:.pyx=.so)))
+
+OBJS = $(COBJS) $(FOBJS)
+
+LIB = $(LIBDIR)/lib$(LIBNAME).so
+
+ifeq ($(MAKEDICT),1)
+OBJS += $(addprefix $(OBJDIR)/,dict$(LIBNAME).o)
+endif
+
+ifeq ($(MAKESTATIC),1)
+STATICLIB += $(BASE)/static/lib$(LIBNAME).a
+endif
+
+# ------------------------------------------
+# GENERAL COMPILER FLAGS
+CXXFLAGS  += -fPIC 
+CXXFLAGS += $(LOCAL_INC)
+FFLAGS += $(LOCAL_INC)
+
+# ------------------------------------------
+# SETUP ROOT AND CERNLIB
+ROOT_LIBS  = `root-config --libs` -lTreePlayer -lMinuit
+CERNLIBS = `cernlib jetset74 photos202 mathlib packlib kernlib pdflib804`
+EXE_LIBS += $(ROOT_LIBS)
+CXXFLAGS  += -I`root-config --incdir`
+
+# ------------------------------------------
+# SET T2KRW FLAGS
+
+ifeq ($(T2KRW_VER),0)
+# No T2KReWEIGHT                                                                                                                                                                                                                           
+CXXFLAGS += -DT2KRWNONE
+else
+# Set Version T2KReWEIGHT
+ifeq ($(T2KRW_VER),v1r17)
+CXXFLAGS += -DT2KRWv17
+else
+CXXFLAGS += -DT2KRWvHEAD
+endif
+endif
+
+# ------------------------------------------
+# GPERFTOOLS FLAGS
+
+ifeq ($(USE_GPERFTOOLS),1)
+CXXFLAGS += -DUSE_GPERFTOOLS
+EXE_LIBS += -L${GPERFTOOLS}/lib -lprofiler 
+endif
+
+# ------------------------------------------
+# OS X FLAGS
+ifeq ($(UNAME),Darwin)
+LD_FLAGS += -dynamiclib -Wl,-undefined,dynamic_lookup -lc++ -flat_namespace
+else
+LD_FLAGS += -lstdc++
+endif
+
+# -----------------------------------
+# LINKER FLAGS
+
+LIB_FLAGS = $(LD_FLAGS) -shared
+
+# ------------------------------------------
+# RULES
+
+.PHONY: all clean localdirnames listnames 
+all: localdirnames listnames $(LIB) $(STATICLIB) $(EXES) $(PYOBJS)
+
+.PHONY: localdirnames listnames
+
+localdirnames:
+	mkdir -p .obj
+	mkdir -p .dep
+	mkdir -p bin
+
+listnames:
+	@echo 'Objects: '$(LIB) $(STATICLIB) $(EXES) $(PYOBJS)
+
+$(EXEDIR)/% : $(OBJDIR)/%.o $(LIB)
+	@echo "Linking executable ..."
+	$(CC) $(EXE_FLAGS) -o $@ $< $(EXE_LIBS) -L$(LIBDIR) -l$(LIBNAME) $(LDLIBS) $(STATIC_LIBS) 
+
+$(LIB) : $(OBJS) $(DICT)
+	@echo "Linking shared library ..."
+	$(CC) $(LIB_FLAGS) -o $@ $^ $(STATIC_LIBS)
+$(STATICLIB) : $(OBJS) $(DICT)
+	@echo "Making static library ..."
+	@rm -f $(STATICLIB)
+	ar clq $@ $(OBJS)
+	ranlib $@
+
+$(OBJDIR)/%.o: src/%.cc
+	@echo "Compiling object ..."
+	$(CC) -c $(CXXFLAGS) -MD -MF $(df).d -o $@ $<
+	@cp $(df).d $(df).P; \
+	    sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	        -e '/^$$/ d' -e 's/$$/ :/' < $(df).d >> $(df).P; \
+	    rm -f $(df).d
+
+$(OBJDIR)/%.o : %.cc
+	@echo "Compiling object ..."
+	$(CC) -c $(CXXFLAGS) -MD -MF $(df).d -o $@ $<
+	@cp $(df).d $(df).P; \
+	    sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	        -e '/^$$/ d' -e 's/$$/ :/' < $(df).d >> $(df).P; \
+	    rm -f $(df).d
+$(OBJDIR)/%.o : %.C
+	@echo "Compiling object ..."
+	$(CC) -c $(CXXFLAGS) -MD -MF $(df).d -o $@ $<
+	@cp $(df).d $(df).P; \
+	    sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	        -e '/^$$/ d' -e 's/$$/ :/' < $(df).d >> $(df).P; \
+	    rm -f $(df).d
+$(OBJDIR)/%.o : %.F
+	@echo "Compiling object ..."
+	$(F77) -c $(FFLAGS) -MD -MF $(df).d -o $@ $<
+	@cp $(df).d $(df).P; \
+	    sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	        -e '/^$$/ d' -e 's/$$/ :/' < $(df).d >> $(df).P; \
+	    rm -f $(df).d
+
+$(OBJDIR)/dict%.o:
+	rootcint -f rootcint/dict$(LIBNAME).cc -c $^ $(ROOTCINT_INC) rootcint/LinkDef.h
+	$(CXX) -c $(CXXFLAGS) rootcint/dict$(LIBNAME).cc -o $@
+
+$(PYLIBDIR)/%.so: $(LIB) $(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.pyx)))
+	@echo "Compile cython object: "$(notdir $@)
+	@echo "cython sourc: "$(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.pyx)))
+	cython $(LOCAL_INC) $(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.pyx))) -o $(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.cc))) --cplus
+	sed -i '' 's/isspace/std::isspace/g' $(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.cc)))
+	$(CC) -c $(CXXFLAGS) -o $(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.o))) $(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.cc))) 
+	$(CC) $(LIB_FLAGS) -o $@ $(addprefix $(PYSRCDIR)/,$(notdir $(@:.so=.o))) $(LIB) $(LDPYLIBS) $(STATIC_LIBS) 
+
+-include $(SRCS:%.cc=$(DEPDIR)/%.P)
+
+
+$(DICT): $(HEADERS)
+	@echo "Generating dictionary ..."
+	rootcint -f $@ -c $(CC_FLAGS) -p $^
+
+clean: 
+	@echo $(DEPDIR)
+	@echo $(OBJS)
+	@echo $(LIB) $(EXES)
+	@rm -f $(OBJS)
+#	@rm -f `echo $(OBJS) | sed 's:\.obj:\.dep:g '| sed 's:\.o:\.P:g'`
+#	@rm -f $(DICT:.C=.h)
+	@rm -f $(LIB)
+	@rm -f $(EXES)
+	@rm -f $(PYOBJS)

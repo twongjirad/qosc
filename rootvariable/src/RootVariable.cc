@@ -1,6 +1,8 @@
 #include "RootVariable.hh"
 #include <sstream>
 
+using namespace qosc;
+
 int RootVariable::m_var_id = 0;
 
 RootVariable::RootVariable() {
