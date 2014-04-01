@@ -1,5 +1,7 @@
-/* 
-   ------------------------------------------------------------------------------------------------
+/*  ------------------------------------------------------------------------------------------------
+
+   Copyright (C) 2014  Taritree Wongjirad
+
    This file is part of qosc.
 
    Qosc is free software: you can redistribute it and/or modify
@@ -33,6 +35,8 @@
  * that serves to avoid recalculating the variable value.
  *
  * One can refuse to use the cache by calling RootVarManager::ForbidCache()
+ *
+ * Note: the classes RootVariableList, RootVariableManager, RootVariableFunction are circularly dependent. Enjoy!
  * 
  * -----------------------------------------------------------------------------------------------
  */
@@ -65,14 +69,16 @@ namespace qosc {
     virtual double Value( int ndims, ... );  ///< Call to get l-value variables, wraps next function
     virtual double Value( int ndims, va_list args ) = 0; // gets the value of the variable or formula.  number of arguments depends on dimensions of data member (for container call)
     //virtual double String( int ndims, ... );  ///< Direct call to get either a string variable or a print out of the variable value for l-value variables
-    //virtual double Value( int ndims, va_list args ) = 0; // gets the value of the variable or formula.  number of arguments depends on dimensions of data member (for container call)
     virtual std::string PrintValue() = 0; // prints the value as a string. note, this is the way to get text items from tree
 
     // Variable Info Calls
     bool IsVariableAnArray() { return kDataIsArray; };
     std::string GetType() { return m_variable_type; };
 
+    // ID Calls
     static int GetTotalVariableInstances() { return RootVariable::m_var_id; };
+    unsigned int GetID() { return m_instance_id; };
+    int GetTreeID() { return m_tree_id; };
 
   protected:
 
@@ -87,12 +93,13 @@ namespace qosc {
   private:
   
     bool kDataIsArray; // is the data member an array?
-    std::string m_variable_type; // The variable's type
+    std::string m_variable_type; // The variable's type [ROOT Variable Name returned]
     std::string m_variable_name; // the variable's name
     int m_tree_id; // The tree number in our chain
     TChain* m_source_tree; // The ROOT Tree Chain that is the source of the data
 
-    static int m_var_id;
+    static int m_var_id; /// counts the number of instances
+    unsigned int m_instance_id;
 
   };
   

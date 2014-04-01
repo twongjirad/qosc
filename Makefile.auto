@@ -6,6 +6,7 @@ endif
 
 UNAME = $(shell uname)
 LIBDIR = $(BASEDIR)/lib
+EXEDIR = bin
 df = $(DEPDIR)/$(*F)
 
 HEADERS = $(notdir $(SRCS:.cc=.h)) LinkDef.h
@@ -84,16 +85,27 @@ all: localdirnames listnames $(LIB) $(STATICLIB) $(EXES) $(PYOBJS)
 .PHONY: localdirnames listnames
 
 localdirnames:
-	mkdir -p .obj
-	mkdir -p .dep
-	mkdir -p bin
+	@mkdir -p .obj
+	@mkdir -p .dep
+	@mkdir -p bin
 
 listnames:
-	@echo 'Objects: '$(LIB) $(STATICLIB) $(EXES) $(PYOBJS)
+	@echo 'Objects to make: '$(LIB) $(STATICLIB) $(EXES) $(PYOBJS)
 
-$(EXEDIR)/% : $(OBJDIR)/%.o $(LIB)
-	@echo "Linking executable ..."
-	$(CC) $(EXE_FLAGS) -o $@ $< $(EXE_LIBS) -L$(LIBDIR) -l$(LIBNAME) $(LDLIBS) $(STATIC_LIBS) 
+#$(EXEDIR)/% : $(OBJDIR)/%.o $(LIB)
+#	@echo "Linking executable ..."
+#	$(CC) $(EXE_FLAGS) -o $@ $< $(EXE_LIBS) -L$(LIBDIR) -l$(LIBNAME) $(LDLIBS) $(STATIC_LIBS) 
+
+$(EXEDIR)/% : $(LIB) tests/%.cc
+	@echo "Building executable: "$@ $* ./$(OBJDIR)/$*.o
+	@rm -f ./$(OBJDIR)/$*.o
+	$(CC) -c $(CXXFLAGS) -o ./$(OBJDIR)/$*.o tests/$*.cc
+	$(CC) $(EXE_FLAGS) -o $@ ./$(OBJDIR)/$*.o $(LIB) $(EXE_LIBS) -L$(LIBDIR) -l$(LIBNAME) $(LDLIBS) $(STATIC_LIBS) 
+
+$(EXEDIR)/% : $(LIB) exesrc/%.cc
+	@echo "Building executable: "$@ $* ./$(OBJDIR)/$*.o
+	$(CC) -c $(CXXFLAGS) -o ./$(OBJDIR)/$*.o exesrc/$*.cc
+	$(CC) $(EXE_FLAGS) -o $@ ./$(OBJDIR)/$*.o $(LIB) $(EXE_LIBS) -L$(LIBDIR) -l$(LIBNAME) $(LDLIBS) $(STATIC_LIBS) 
 
 $(LIB) : $(OBJS) $(DICT)
 	@echo "Linking shared library ..."
