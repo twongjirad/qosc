@@ -18,35 +18,34 @@
    You should have received a copy of the GNU General Public License
    along with Qosc.  If not, see <http://www.gnu.org/licenses/>.
    ---------------------------------------------------------------------------------------------- */
+/**
+ * -----------------------------------------------------------------------------------------------------------------------
+ * \class TestFit1
+ *  \defgroup ProfileMinuit
+ *  \brief Test implementation for the Iterative Solver. Works with tests/run_testfit1.cc.
+ *
+ * -----------------------------------------------------------------------------------------------------------------------
+ */
 
-#include "SeparateString.hh"
-#include <iostream>
+#ifndef __TestFit1__
+#define __TestFit1__
 
-void qosc::SeparateString( std::string strlist, std::vector< std::string >& list, std::string separators ) {
-  size_t pos = 0;
+#include "IterativeSolver.hh"
+
+namespace qosc {
+
+  class TestFit1 : public IterativeSolver {
   
-  while ( pos<std::string::npos ) {
-    size_t nextpos = strlist.find_first_of( separators, pos);
-    if ( nextpos!=std::string::npos || pos<std::string::npos ) {
-      std::string sysname;
-
-      if ( nextpos!=std::string::npos ) {
-	sysname = strlist.substr(pos,nextpos-pos); // found separating string
-	pos = nextpos+1;
-      }
-      else {
-	sysname = strlist.substr( pos ); // read off last sys term
-	pos = nextpos; // npos
-      }
-
-      if (sysname!="") {      
-	list.push_back( sysname );
-      }
-    }
-    else {
-      pos = nextpos;
-    }
-    // std::cout << "pos=" << pos << " nextpos=" << nextpos << " npos=" << std::string::npos << std::endl; // for debug
-  }
+  public:
   
+    TestFit1();
+    virtual ~TestFit1();
+
+    virtual void CalculateF( double* x, double* F );
+    virtual void BuildJacobian( double* x, double** J );
+  
+  };
+
 }
+
+#endif

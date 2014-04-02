@@ -921,7 +921,7 @@ double ProfileMinuit::UserReturn1SigmaShiftInBinByNewtonParameter( int binNum, s
 
 // ------------------------------------------------------------------------------------------
 
-void DefaultProfileMinuitFCN( int &ndim, double* grad_optional, double &result, double par[], int flag ) {
+void qosc::DefaultProfileMinuitFCN( int &ndim, double* grad_optional, double &result, double par[], int flag ) {
   ProfileMinuit* mm = ProfileMinuit::GetGlobalInstance();
 
 

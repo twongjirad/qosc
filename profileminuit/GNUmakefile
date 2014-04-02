@@ -20,7 +20,7 @@ OPT = -g -pg
 
 EXE_LIBS += -L$(LIBDIR) -lanalysistools -lanalysisfw -lrootvariable
 
-EXESRCS = $(wildcard exesrc/*.cc)
+EXESRCS = $(wildcard tests/*.cc)
 EXEDIR = ./bin
 VPATH += exesrc
 
