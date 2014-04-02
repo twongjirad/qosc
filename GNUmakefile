@@ -7,7 +7,7 @@ ifeq (${BASEDIR},)
 	BASEDIR=${PWD}
 endif
 
-LIBS = rootvariable
+LIBS = rootvariable analysisfw analysistools
 
 .PHONY: basedir libs all
 

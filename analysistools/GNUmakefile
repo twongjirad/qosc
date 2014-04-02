@@ -1,13 +1,14 @@
 # -*- mode: Makefile -*-
-include ../Makefile.inc
+include ../Makefile.config
 
 LIBNAME = analysistools
 
+BASEDIR = ..
 DEPDIR = .dep
 OBJDIR = .obj
 
 LOCAL_INC += -I./include
-LOCAL_INC += -I$(BASE)/rootvariable/include
+LOCAL_INC += -I$(BASEDIR)/rootvariable/include
 LOCAL_LIBS += -L$(LIBDIR) -lrootvariable
 
 LOCAL_INC += -I$(PYTHONINC)
