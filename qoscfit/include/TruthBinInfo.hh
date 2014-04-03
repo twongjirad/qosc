@@ -75,7 +75,7 @@ namespace qosc {
     // Temporary Cut Lists. For each cut combination, there needs to be a histogram. 
     // We store cut definitions here, before allocating the array below;
     // These variables live here, because we use a recursive formula to build the list of cuts
-    typedef struct cut_set {
+    struct cut_set {
       int ncuts;
       std::string* names;
       std::string* formulas;
@@ -88,7 +88,7 @@ namespace qosc {
 
     // Here the cuts are stored in sequence. Made from combining the cuts stored in the m_cutlist_formulas vector.
     // We need to be able to acces these histogram by names, but also by truth bin index.
-    typedef struct cut_data {
+    struct cut_data {
       std::string name;
       std::string formula;
       std::string histname;

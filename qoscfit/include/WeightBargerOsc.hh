@@ -33,7 +33,7 @@
 #include <string>
 //#include "BargerPropagator.h"
 
-#include "Weight.hh"
+#include "WeightOscEvent.hh"
 #include "RootVariableList.hh"
 
 #include "SinThetaForms.hh"
@@ -43,7 +43,7 @@ class BargerPropagator;
 
 namespace qosc {
 
-  class WeightBargerOsc : public Weight {
+  class WeightBargerOsc : public WeightOscEvent {
 
   public:
 
@@ -51,25 +51,24 @@ namespace qosc {
     typedef enum { ks12=0, ks13, ks32, kdm12, kdm32, kcp } ParID;
     static const int kNumPars = 6;
 
-
     WeightBargerOsc( SinThetaForms sin_term_type, TChain* source, std::string nueE_GeV_var, std::string nuflux_var, std::string nuxsec_var, std::string mode_var, std::string weight_var );
     virtual ~WeightBargerOsc();
+
+    virtual double CalculateWeight();
+    virtual double CalculateWeight( double var ) { return CalculateWeight(); };
+    virtual Weight* CloneWeight( TChain* source );    
+
     void SetMNS( double theta12, double theta13, double theta23, double dm12, double dm23, double CP );
     void SetMNS( double theta12, double theta13, double theta23, double dm12, double dm23, double CP, SinThetaForms atm_term_type );
     void PrintMNS();
-    double CalculateWeight();
-    double CalculateWeight( double var ) { return CalculateWeight(); };
-    void SetChain( TChain* source );
+
     void SetT2K(int flavortype); //hmm, in the futre this should be changed to its own child class
     void SetPOT( double pot ) { m_POT = pot; };
-    void SetMapMode( bool mapmode ) { fMapMode = mapmode; };
-    Weight* CloneWeight( TChain* source );
+
     void SetSinThetaForm( SinThetaForms sin_term_type ) { fSinThetaForm=sin_term_type; };
 
   protected:
 
-    bool fParamsSet;
-    bool fMapMode;
     BargerPropagator* m_BP;
     TChain* m_source_chain;
     RootVariableList m_rootvars;

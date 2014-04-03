@@ -28,7 +28,9 @@
 
 using namespace qosc;
 
-WeightBargerOsc::WeightBargerOsc( SinThetaForms sin_theta_type, TChain* source, std::string nuE_GeV_var, std::string nuflux_var, std::string nuxsec_var, std::string mode_var, std::string weight_var ) {
+WeightBargerOsc::WeightBargerOsc( SinThetaForms sin_theta_type, TChain* source, std::string nuE_GeV_var, std::string nuflux_var, std::string nuxsec_var, std::string mode_var, std::string weight_var ) 
+  : WeightOscEvent( source )
+{
   /** 
       This takes a source chain file (and its friend trees) along with the leaf names 
       for the neutrino energy in GeV (nuE_GeV_var), the neutrino flux flavor (nuflux_var)
@@ -38,9 +40,9 @@ WeightBargerOsc::WeightBargerOsc( SinThetaForms sin_theta_type, TChain* source, 
   */
 
   m_BP = new BargerPropagator( false ); // This is Roger's oscillation calculator
-  fParamsSet = false; // Parameters have not been set yet
-  SetChain( source ); // The source chain is expected to have information on the flux and xsec flavor of the event
-  
+  SetParamsSetFlag( false ); // Parameters have not been set yet
+  SetSourceChain( source ); // The source chain is expected to have information on the flux and xsec flavor of the event
+
   m_nuE_GeV_var = nuE_GeV_var; // The name of the neutrino energy variable (in GeV)
   m_nuflux_var = nuflux_var; // Name of the neutrino flux flavor variable
   m_nuxsec_var =  nuxsec_var; // Name of the neutrino xsec variable
@@ -48,6 +50,7 @@ WeightBargerOsc::WeightBargerOsc( SinThetaForms sin_theta_type, TChain* source, 
   m_weight_var = weight_var; // Normalization factor (extracted by separate code and included as a friend tree)
  
   // Create instances of the variables here
+  m_rootvars.SetChain( source );  
   m_rootvars.Add( m_nuE_GeV_var );
   m_rootvars.Add( m_nuflux_var );
   m_rootvars.Add( m_nuxsec_var );
@@ -56,7 +59,7 @@ WeightBargerOsc::WeightBargerOsc( SinThetaForms sin_theta_type, TChain* source, 
     m_rootvars.Add( m_weight_var );
 
   fSinThetaForm = sin_theta_type;
-  fMapMode = false;
+  SetMapMode(false);
   m_POT = 1.0;
 }
 
@@ -90,11 +93,6 @@ void WeightBargerOsc::PrintMNS() {
   std::cout << "  delta_CP = " << m_CP*180/3.14159 << " deg" << std::endl;
   std::cout << " Normal Hierarchy" << std::endl;
   std::cout << "------------------------" << std::endl;
-}
-
-void WeightBargerOsc::SetChain( TChain* source ) {
-  m_source_chain = source;
-  m_rootvars.SetChain( source );
 }
 
 void WeightBargerOsc::SetT2K( int flavortype ) {
