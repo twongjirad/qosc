@@ -26,6 +26,7 @@
 #include "TChain.h"
 #include "TTree.h"
 #include "TRandom3.h"
+#include "TH1D.h"
 
 #include "HistCoordinator.hh"
 #include "HistRootVariable.hh"

@@ -72,7 +72,8 @@
 #include "UserBinInfoList.hh"
 #include "UserBinInfo.hh"
 
-#include "TH1D.h"
+class TH1;
+class TH1D;
 class TH2D;
 class TFile;
 
