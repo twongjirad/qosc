@@ -33,3 +33,4 @@ WeightOscEvent::WeightOscEvent( TChain* source_chain )
 }
 
 WeightOscEvent::~WeightOscEvent() {}
+

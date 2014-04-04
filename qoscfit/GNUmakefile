@@ -19,7 +19,7 @@ LOCAL_INC += -I./include
 LOCAL_INC += -I$(BASEDIR)/rootvariable/include/ -I$(BASEDIR)/analysistools/include
 LOCAL_INC += -I$(BASEDIR)/profileminuit/include
 LOCAL_INC += -I$(BASEDIR)/analysisfw/include
-LOCAL_LIBS += -L$(LIBDIR) -lrootvariable -lanalysistools -lanalysisfw -lmarginminuit
+LOCAL_LIBS += -L$(LIBDIR) -lrootvariable -lanalysistools -lanalysisfw -lprofileminuit
 
 # T2K Reweight Headers: systematic uncertainty package for reweighting MC predictions
 # Can I remove this from the main package? This is application specific.
@@ -66,6 +66,7 @@ EXE_LIBS += ${LOCAL_LIBS} ${ROOT_LIBS} ${CERNLIBS}
 
 CCSRCS = $(wildcard src/*.cc)
 EXESRCS = $(wildcard exesrc/*.cc)
+EXESRCS += $(wildcard tests/*.cc)
 VPATH += exesrc
 
 include ../Makefile.auto

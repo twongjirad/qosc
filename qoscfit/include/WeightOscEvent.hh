@@ -30,13 +30,12 @@
 #include <string>
 
 #include "Weight.hh" // base class which has function definitions needed to fill a HistRootVariable from ROOT tree
-//#include "RootVariableList.hh" 
-//#include "SinThetaForms.hh"
 
 class TChain;
-//class BargerPropagator;
 
 namespace qosc {
+
+  class ParameterManager;
 
   class WeightOscEvent : public Weight {
 
@@ -47,6 +46,7 @@ namespace qosc {
     virtual double CalculateWeight() = 0; ///< return oscillation weight
     virtual double CalculateWeight( double var ) = 0; ///< return oscillation weight given some variable
     void SetMapMode( bool mapmode ) { fMapMode = mapmode; }; ///< in map mode, all oscillation weights return 1.0. For building templates.
+    virtual void UpdateParameters( ParameterManager* ) {}; ///< update parameter values by passing container. default implementation does nothing.
 
     bool HaveParsBeenSet() { return fParamsSet; };
 

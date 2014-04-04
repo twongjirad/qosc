@@ -43,20 +43,26 @@ class BargerPropagator;
 
 namespace qosc {
 
+  class ParameterManager;
+  class ModelParameter;
+  
   class WeightBargerOsc : public WeightOscEvent {
 
   public:
 
     //typedef enum { kSin2Theta, kSinTheta } SinThetaForms;
-    typedef enum { ks12=0, ks13, ks32, kdm12, kdm32, kcp } ParID;
+    typedef enum { ks12=0, ks13, ks23, kdm12, kdm32, kcp } ParID;
     static const int kNumPars = 6;
 
     WeightBargerOsc( SinThetaForms sin_term_type, TChain* source, std::string nueE_GeV_var, std::string nuflux_var, std::string nuxsec_var, std::string mode_var, std::string weight_var );
+    WeightBargerOsc( SinThetaForms sin_term_type, TChain* source, std::string nueE_GeV_var, std::string nuflux_var, std::string nuxsec_var, std::string mode_var, std::string weight_var,
+		     std::string s12name, std::string s13name, std::string s23name, std::string dm12name, std::string dm32name, std::string cpdname, ParameterManager* parman );
     virtual ~WeightBargerOsc();
 
     virtual double CalculateWeight();
     virtual double CalculateWeight( double var ) { return CalculateWeight(); };
     virtual Weight* CloneWeight( TChain* source );    
+    virtual void UpdateParameters( ParameterManager* );
 
     void SetMNS( double theta12, double theta13, double theta23, double dm12, double dm23, double CP );
     void SetMNS( double theta12, double theta13, double theta23, double dm12, double dm23, double CP, SinThetaForms atm_term_type );
@@ -66,6 +72,7 @@ namespace qosc {
     void SetPOT( double pot ) { m_POT = pot; };
 
     void SetSinThetaForm( SinThetaForms sin_term_type ) { fSinThetaForm=sin_term_type; };
+    bool AreParsAssigned() { return fParsAssigned; };
 
   protected:
 
@@ -83,13 +90,20 @@ namespace qosc {
     std::string m_weight_var;
 
     // PMNS Oscillation parameters
-    double m_s12; 
-    double m_s13;
-    double m_s23;
-    double m_dm12;
-    double m_dm23;
-    double m_CP;
+//     double m_s12; 
+//     double m_s13;
+//     double m_s23;
+//     double m_dm12;
+//     double m_dm23;
+//     double m_CP;
+    double m_osc_pars[6];
 
+  protected:
+    bool fParsAssigned;
+    std::string parnames[6];
+    int parid[6];
+    ModelParameter* poscpars[6];
+    void AssignPars( std::string s12name, std::string s13name, std::string s23name, std::string dm12name, std::string dm32name, std::string cpdname, ParameterManager* parman );
   };
 
 }
