@@ -47,14 +47,15 @@ namespace qosc {
     void SetMapMode( bool mapmode ) { fMapMode = mapmode; }; ///< oscillation effect is 1.0. Used to build templates. [needed?]
     bool GetMapMode() { return fMapMode; };
     bool AreParamsSet() { return fParamsSet; };
+    void Configure( TruthBinInfo* truth_bin_def ) { __configure__(truth_bin_def); };
 
   protected:
     // Flags
     bool fParamsSet; /// flag that turns on when osc parameters set for the first time
     bool fMapMode; /// in map mode, oscillation weight is always one
 
-    virtual void Configure( TruthBinInfo* truth_bin_def ) = 0;
-
+    virtual void __configure__( TruthBinInfo* truth_bin_def ) = 0;
+    
   protected:
     // Verbosity flag and its get/set function
     int fVerbose;

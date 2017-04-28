@@ -16,8 +16,7 @@ all: basedir libraries
 lib%.so:
 	@mkdir -p $(BASEDIR)/lib
 	@echo 'Building library '$@,' from '$(subst .so,,$(subst lib,,$@))
-	@cd $(subst .so,,$(subst lib,,$@)); gmake
-#	@cd ${BASEDIR}
+	@cd $(subst .so,,$(subst lib,,$@)); make
 
 basedir:
 	@echo 'Base directory set to ${BASEDIR}'
@@ -25,3 +24,7 @@ basedir:
 libraries: $(addprefix lib, $(addsuffix .so, $(LIBS)))
 	@echo 'Made packages: '$^
 
+clean:
+	make clean --directory rootvariable
+	make clean --directory analysisfw
+	make clean --directory analysistools

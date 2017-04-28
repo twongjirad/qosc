@@ -23,24 +23,26 @@
 
 #include "TruthBinInfo.hh"
 
-using namespace qosc;
+namespace qosc {
 
-WeightOscTruthBinInfo::WeightOscTruthBinInfo( TruthBinInfo* truth_bin_def ) { 
-  /** 
-      This takes a source chain file (and its friend trees) along with the leaf names 
-      for the neutrino energy in GeV (nuE_GeV_var), the neutrino flux flavor (nuflux_var)
-      and the neutrino cross section flavor (nuxsec_var).
-      It then utilizes a RootVariableList to create a hook into the ROOT chain in order 
-      to access the value of these variables event by event.
-  */
+  WeightOscTruthBinInfo::WeightOscTruthBinInfo( TruthBinInfo* truth_bin_def ) { 
+    /** 
+	This takes a source chain file (and its friend trees) along with the leaf names 
+	for the neutrino energy in GeV (nuE_GeV_var), the neutrino flux flavor (nuflux_var)
+	and the neutrino cross section flavor (nuxsec_var).
+	It then utilizes a RootVariableList to create a hook into the ROOT chain in order 
+	to access the value of these variables event by event.
+    */
 
-  fParamsSet = false; // Parameters have not been set yet
-  fMapMode = false;
-  SetVerbose(0);
+    fParamsSet = false; // Parameters have not been set yet
+    fMapMode = false;
+    SetVerbose(0);
 
-  Configure( truth_bin_def );
+    Configure( truth_bin_def );
+
+  }
+
+
+  WeightOscTruthBinInfo::~WeightOscTruthBinInfo() {}
 
 }
-
-
-WeightOscTruthBinInfo::~WeightOscTruthBinInfo() {}

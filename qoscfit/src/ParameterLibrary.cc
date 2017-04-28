@@ -20,74 +20,75 @@
 
 #include "ParameterLibrary.hh"
 
-using namespace qosc;
+namespace qosc {
 
-ParameterLibrary* ParameterLibrary::singleton = NULL;
-std::set< std::string >* ParameterLibrary::m_group_set = NULL;
-std::map< std::string, std::string >* ParameterLibrary::m_groups_dict = NULL;
+  ParameterLibrary* ParameterLibrary::singleton = NULL;
+  std::set< std::string >* ParameterLibrary::m_group_set = NULL;
+  std::map< std::string, std::string >* ParameterLibrary::m_groups_dict = NULL;
 
-ParameterLibrary* getTheParameterLibrary() {
-  return ParameterLibrary::GetTheParameterLibrary();
-}
+  ParameterLibrary* getTheParameterLibrary() {
+    return ParameterLibrary::GetTheParameterLibrary();
+  }
 
-ParameterLibrary::ParameterLibrary() 
-{}
+  ParameterLibrary::ParameterLibrary() 
+  {}
 
-ParameterLibrary::ParameterLibrary( std::string name ) 
-  : ParameterManager( name )
-{
-  m_group_set = new std::set< std::string >;
-  m_groups_dict = new std::map< std::string, std::string >;
-  m_group_set->insert( "_nogroup_" );
-  m_groups_dict->clear();
-}
+  ParameterLibrary::ParameterLibrary( std::string name ) 
+    : ParameterManager( name )
+  {
+    m_group_set = new std::set< std::string >;
+    m_groups_dict = new std::map< std::string, std::string >;
+    m_group_set->insert( "_nogroup_" );
+    m_groups_dict->clear();
+  }
 
-ParameterLibrary::~ParameterLibrary() {
-}
+  ParameterLibrary::~ParameterLibrary() {
+  }
 
-ModelParameter* ParameterLibrary::GetParameter( std::string parname ) {
-  ParameterLibrary* parlib = getTheParameterLibrary();
-  return dynamic_cast<ParameterManager*>(parlib)->GetParameter( parname );    
-}
+  ModelParameter* ParameterLibrary::GetParameter( std::string parname ) {
+    ParameterLibrary* parlib = getTheParameterLibrary();
+    return dynamic_cast<ParameterManager*>(parlib)->GetParameter( parname );    
+  }
 
-ParameterLibrary* ParameterLibrary::GetTheParameterLibrary() {
-  if ( singleton==NULL )
-    singleton = new ParameterLibrary( "ParameterLibrary" );
-  return singleton;
-}
+  ParameterLibrary* ParameterLibrary::GetTheParameterLibrary() {
+    if ( singleton==NULL )
+      singleton = new ParameterLibrary( "ParameterLibrary" );
+    return singleton;
+  }
 
-void ParameterLibrary::AddParameter( ModelParameter* parterm, std::string groupname ) {
-  RegisterParameter( parterm );
-  m_group_set->insert( groupname );
-  std::string parname = parterm->GetName();
-  ParameterLibrary::m_groups_dict->insert( std::pair< std::string, std::string>( parname, groupname ) );
-}
+  void ParameterLibrary::AddParameter( ModelParameter* parterm, std::string groupname ) {
+    RegisterParameter( parterm );
+    m_group_set->insert( groupname );
+    std::string parname = parterm->GetName();
+    ParameterLibrary::m_groups_dict->insert( std::pair< std::string, std::string>( parname, groupname ) );
+  }
 
-void ParameterLibrary::Print() {
-  ParameterLibrary* parlib = getTheParameterLibrary();
-  dynamic_cast<ParameterManager*>(parlib)->Print();
-}
+  void ParameterLibrary::Print() {
+    ParameterLibrary* parlib = getTheParameterLibrary();
+    dynamic_cast<ParameterManager*>(parlib)->Print();
+  }
 
-bool ParameterLibrary::IsGroupDefined( std::string groupname ) {
-  if ( m_group_set->find( groupname )!=m_group_set->end() )
-    return true;
-  else
-    return false;
-}
+  bool ParameterLibrary::IsGroupDefined( std::string groupname ) {
+    if ( m_group_set->find( groupname )!=m_group_set->end() )
+      return true;
+    else
+      return false;
+  }
 
 
-std::string ParameterLibrary::GetParameterGroup( std::string parname ) {
-  if ( m_groups_dict->find( parname )!=m_groups_dict->end() )
-    return m_groups_dict->find(parname)->second;
+  std::string ParameterLibrary::GetParameterGroup( std::string parname ) {
+    if ( m_groups_dict->find( parname )!=m_groups_dict->end() )
+      return m_groups_dict->find(parname)->second;
 
-  std::cout << "Parameter is not a part of a group." << std::endl;
-  assert(false);
-}
+    std::cout << "Parameter is not a part of a group." << std::endl;
+    assert(false);
+  }
 
-void ParameterLibrary::GetParametersInGroup( std::string groupname, std::vector< std::string >& parlist ) {
-  parlist.clear();
-  for ( std::map< std::string, std::string >::iterator igroup=m_groups_dict->begin(); igroup!=m_groups_dict->end(); igroup++ ) {
-    if ( igroup->second==groupname )
-      parlist.push_back( igroup->first );
+  void ParameterLibrary::GetParametersInGroup( std::string groupname, std::vector< std::string >& parlist ) {
+    parlist.clear();
+    for ( std::map< std::string, std::string >::iterator igroup=m_groups_dict->begin(); igroup!=m_groups_dict->end(); igroup++ ) {
+      if ( igroup->second==groupname )
+	parlist.push_back( igroup->first );
+    }
   }
 }

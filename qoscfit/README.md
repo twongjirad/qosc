@@ -1,0 +1,3 @@
+# qoscfit: Quick Oscillation Fitter
+
+I forget how this works...

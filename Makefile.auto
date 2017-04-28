@@ -36,7 +36,8 @@ FFLAGS += $(LOCAL_INC)
 # ------------------------------------------
 # SETUP ROOT AND CERNLIB
 ROOT_LIBS  = `root-config --libs` -lTreePlayer -lMinuit
-CERNLIBS = `cernlib jetset74 photos202 mathlib packlib kernlib pdflib804`
+CERNLIBS = 
+#CERNLIBS = `cernlib jetset74 photos202 mathlib packlib kernlib pdflib804`
 EXE_LIBS += $(ROOT_LIBS)
 CXXFLAGS  += -I`root-config --incdir`
 
@@ -91,10 +92,6 @@ localdirnames:
 
 listnames:
 	@echo 'Objects to make: '$(LIB) $(STATICLIB) $(EXES) $(PYOBJS)
-
-#$(EXEDIR)/% : $(OBJDIR)/%.o $(LIB)
-#	@echo "Linking executable ..."
-#	$(CC) $(EXE_FLAGS) -o $@ $< $(EXE_LIBS) -L$(LIBDIR) -l$(LIBNAME) $(LDLIBS) $(STATIC_LIBS) 
 
 $(EXEDIR)/% : $(LIB) tests/%.cc
 	@echo "Building executable: "$@ $* ./$(OBJDIR)/$*.o

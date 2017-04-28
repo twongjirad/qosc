@@ -38,7 +38,7 @@ endif
 
 # Prob3++: Oscillation Probability Calculator
 LOCAL_INC += -I$(PROBTPP_DIR)
-LOCAL_LIBS += $(PROBTPP_LIB)
+LOCAL_LIBS += -L$(PROBTPP_DIR) -lThreeProb
 
 # T2K Reweight Libraries
 ifneq ($(T2KRW_VER),0)
@@ -49,7 +49,7 @@ LOCAL_LIBS += `cernlib -pdflib804`
 endif
 
 # CERNLIB
-LOCAL_LIBS += $(CERNLIBS)
+#LOCAL_LIBS += $(CERNLIBS)
 
 # PYTHON BINDINGS
 # Python Bindings via Cython
