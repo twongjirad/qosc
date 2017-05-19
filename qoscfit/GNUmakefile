@@ -38,7 +38,7 @@ endif
 
 # Prob3++: Oscillation Probability Calculator
 LOCAL_INC += -I$(PROBTPP_DIR)
-LOCAL_LIBS += -L$(PROBTPP_DIR) -lThreeProb
+LOCAL_LIBS += -L$(PROBTPP_DIR) -l$(PROBTPP_LIBNAME)
 
 # T2K Reweight Libraries
 ifneq ($(T2KRW_VER),0)

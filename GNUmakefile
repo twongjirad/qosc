@@ -7,7 +7,7 @@ ifeq (${BASEDIR},)
 	BASEDIR=${PWD}
 endif
 
-LIBS = rootvariable analysisfw analysistools
+LIBS = rootvariable analysisfw analysistools profileminuit qoscfit
 
 .PHONY: basedir libs all
 
@@ -28,3 +28,5 @@ clean:
 	make clean --directory rootvariable
 	make clean --directory analysisfw
 	make clean --directory analysistools
+	make clean --directory profileminuit
+	make clean --directory qoscfit

@@ -9,7 +9,7 @@ export BASEDIR=$PWD
 # -----------------------------------
 # Prob3++
 export PROBTPP_DIR=/home/twongjirad/working/t2k/Prob3
-export PROBTPP_LIB=libThreeProb_2.10.so
+export PROBTPP_LIBNAME=ThreeProb_2.10
 
 # -----------------------------------
 # T2K REWIGHT
