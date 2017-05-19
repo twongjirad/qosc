@@ -1,8 +1,4 @@
 
-
-export LD_LIBRARY_PATH=$PWD/lib:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH=/home/twongjirad/working/uboone/Prob3++.20121225/:${LD_LIBRARY_PATH}
-
 # REQUIRED
 
 # BASEDIR is the location of the package. 
@@ -12,7 +8,7 @@ export BASEDIR=$PWD
 
 # -----------------------------------
 # Prob3++
-export PROBTPP_DIR=/home/twongjirad/working/uboone/Prob3++.20121225
+export PROBTPP_DIR=/home/twongjirad/working/t2k/Prob3
 export PROBTPP_LIB=libThreeProb_2.10.so
 
 # -----------------------------------
@@ -38,3 +34,7 @@ export BUILD_CYTHON_LIBRARIES=0
 export PYTHONINC=/usr/local/python-2.7/include/python2.7
 export PYTHONLIB=" -L/usr/local/python-2.7/lib -lpython2.7"
 
+# ---------------------------------------
+# Set Paths
+export LD_LIBRARY_PATH=$PWD/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${PROBTPP_DIR}:${LD_LIBRARY_PATH}
